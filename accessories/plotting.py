@@ -12,7 +12,7 @@ import os
 
 from matplotlib.colors import ListedColormap
 
-FIJI_PATH = "/home/aurelien/Documents/software/Fiji.app/luts/"
+FIJI_PATH = r"C:\Users\univ4208\Documents\software\fiji-win64\Fiji.app\luts/"
 
 def fiji_luts_available():
     luts = glob.glob(FIJI_PATH+"*.lut")
