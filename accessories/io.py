@@ -11,8 +11,10 @@ from PIL import Image
 from PIL.TiffTags import TAGS
 from tifffile import imread
 
-def get_tiff_img(file):
+def get_tiff_img(file, preprocess = None):
     out_arr = imread(file) - 2**15
+    if preprocess is not None:
+        out_arr = preprocess(out_arr)
     with Image.open(file) as img:
         #out_arr = np.asarray(img) - 2**15
         meta_dict = {TAGS[key] : img.tag[key] for key in img.tag.keys()}
