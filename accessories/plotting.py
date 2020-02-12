@@ -26,7 +26,7 @@ def fiji_lut(lut_name, debug = False):
     lname = FIJI_PATH + lut_name+".lut"
     all_bytes = list()
     
-    custom = ["Magenta", "Cyan"]
+    custom = ["Magenta", "Cyan", "Green", "Red" ,"Blue"]
     
     if lut_name in custom:
         u = np.arange(256)
@@ -38,6 +38,18 @@ def fiji_lut(lut_name, debug = False):
         elif lut_name == "Cyan":
             r = nu
             g = u
+            b = u
+        elif lut_name == "Green":
+            r = nu
+            g = u
+            b = nu
+        elif lut_name == "Red":
+            r = u
+            g = nu
+            b = nu
+        elif lut_name == "Blue":
+            r = nu
+            g = nu
             b = u
     else:
         if not os.path.isfile(lname):
