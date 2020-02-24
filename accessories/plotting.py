@@ -89,11 +89,15 @@ def get_extent(img,res):
 
 def plot_scalebar(img,res,pos = [0.5,0.98],axis = 0, nline = 50, size = 1):
     """
-    img: 2D array
-    res: list of 2 elements, res along axis (0,1)
-    pos: x,y initial position of scalebar
-    axis: int
-    size: in microns, should be same as resolution"""
+    Calculates the position for a scalebar to be plotted using matplotlib.
+    Parameters:
+        img (ndarray): the image that needs a scalebar
+        res (list): list of 2 elements, res along axis (0,1)
+        pos (list): x,y initial position of scalebar
+        axis (int): index of axis (0 or 1) where the scalebar is plotted
+        size (float): in microns, should be same as resolution
+    Returns:
+        tuple: [xsbar, zsbar], the coordinates of the new scalebar"""
     u,v = img.shape
     if axis==0:
         x0sbar = v * pos[1] * res[1]
@@ -107,3 +111,28 @@ def plot_scalebar(img,res,pos = [0.5,0.98],axis = 0, nline = 50, size = 1):
         z0sbar = u*pos[0]*res[0]
         zsbar = np.ones(nline) * z0sbar  
     return xsbar,zsbar
+
+
+def plot_squarebox(xs,zs, kwgs = {"color":"white", "linestyle":"-"}):
+    """Plots a square box at given coordinates
+    Parameters:
+        xs (list): min and max x position
+        zs (list): min and max y position"""
+    npts = 10
+    x1 = np.linspace(xs[0],xs[1], npts)
+    y1 = np.linspace(zs[0],zs[1],npts)
+    x2 = np.ones(npts)*xs[0]
+    x3 = np.ones(npts)*xs[1]
+    y2 = np.ones(npts)*zs[0]
+    y3 = np.ones(npts)*zs[1]
+    
+    # bottom
+    plt.plot(x1,y2,**kwgs)
+    # top
+    plt.plot(x1,y3,**kwgs)
+    
+    # left
+    plt.plot(x2,y1,**kwgs)
+    
+    # right
+    plt.plot(x3,y1,**kwgs)
