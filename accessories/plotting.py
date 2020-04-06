@@ -12,7 +12,7 @@ import os
 
 from matplotlib.colors import ListedColormap
 
-FIJI_PATH = r"C:\Users\univ4208\Documents\software\fiji-win64\Fiji.app\luts/"
+FIJI_PATH = r"/opt/Fiji.app/luts/"
 
 def fiji_luts_available():
     luts = glob.glob(FIJI_PATH+"*.lut")
@@ -136,3 +136,50 @@ def plot_squarebox(xs,zs, kwgs = {"color":"white", "linestyle":"-"}):
     
     # right
     plt.plot(x3,y1,**kwgs)
+    
+def plot_points(p,x,spacing, color="C0",markersize=3):
+    """Plots all points of a distribution.
+    Parameters:
+        p (list):, values of datapoints to plot
+        x (int): position where to plot the points
+        spacing (float): minimum distance between points
+    Returns:
+        """
+    assert(spacing>0)
+    def fdx(pts,x):
+        dist = spacing *2 # initialise to do the thing
+        curr_pt = pts[0]
+        
+        # initialisation
+        indices_to_remove = [0]
+        
+        plt.plot(x,curr_pt,"o",color=color, markersize = markersize)
+        for j in range(1,len(pts)):
+            pt = pts[j]
+            dist = pt - curr_pt
+            
+            if dist>spacing:
+                curr_pt = pt
+                plt.plot(x,curr_pt,"o",color=color,markersize=markersize)
+                indices_to_remove.append(j)
+        for ind in indices_to_remove[::-1]:
+            pts.pop(ind)
+    #plt.figure()
+    # Takes a set of ys as coordinates
+    pts = sorted(p)
+    print(len(pts))
+    niter = len(p) # max iters
+    jit = 0
+    
+    dx = 0.4
+    xs = np.linspace(0,dx,niter)
+    xs[1::2] = np.linspace(0,-dx,niter//2)
+    xs+=x
+    while(len(pts)>0 and jit<niter):
+        # pts = pts[::-1]
+        fdx(pts,xs[jit])
+        if jit==niter-1:
+            raise TimeoutError("Too many interations")
+        jit+=1
+    print(len(pts))
+    return pts
