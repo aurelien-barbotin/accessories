@@ -9,6 +9,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from scipy.optimize import curve_fit
+import h5py
 
 def cres(res1,res2):
     """compares two resolutions"""
@@ -49,3 +50,67 @@ def gaussian_fwhm(*args,**kwargs):
     sigma = popt[1]
     fwhm = np.sqrt(8*np.log(2)*sigma)
     return fwhm
+
+class AberrationNames(object):
+    def __init__(self):
+        self.names = ['High NA defocus','tip','tilt','defocus','Oblique astigmatism'\
+                    ,'Vertical astigmatism','Vertical coma','Horizontal coma'\
+                    ,'Vertical trefoil','Oblique trefoil','1st spherical',\
+                    'Vertical secondary astigmatism',\
+                    'Oblique scondary astigmatism',\
+                    'Vertical quadrafoil','Oblique quadrafoil']
+    def __getitem__(self,nb):
+        if isinstance(nb,(int,np.integer)):
+            if nb<0:
+                return "Not a zernike mode"
+            elif nb<len(self.names):
+                return self.names[nb]
+            elif nb==21:
+                return "2nd spherical"
+            elif nb==36:
+                return "3rd spherical"
+            else:
+                return "mode "+str(nb)
+            
+        elif type(nb)==list or type(nb)==np.ndarray:
+            out=[]
+            for elt in nb:
+                out.append(self.__getitem__ (elt) )
+            return out
+        
+aberration_names = AberrationNames()
+
+def file_extractor(file, open_stacks=True):
+    h5f = h5py.File(file, 'r')
+    out = {} 
+    for key in h5f['modal/'].keys():
+        if key=="log_images" and not open_stacks:
+            continue
+        out[key] = h5f['modal/'][key][()]
+    return out
+
+def comparison_file_extractor(file,open_stacks=True):
+    """Opens the result of a comparison experiment.
+    Parameters:
+        file: str, path to file
+        open_stacks: bool, if False does not load the stacks (for less memory consumption)"""
+    out={}
+    h5f = h5py.File(file, 'r')
+    for k in h5f.keys():
+        if k!="filenames":
+            if k=="stacks" and not open_stacks:
+                continue
+            out[k] = h5f[k].value
+        else:
+            fn = {}
+            for kk in h5f["filenames/"]:
+                nr = int(kk[4:])
+                fn[nr] = h5f["filenames"][kk].value
+                # print(kk,fn[nr])
+            fn = sorted(fn.items())
+            nrs = np.array([x[0] for x in fn])
+            fn = [x[1] for x in fn]
+            assert(np.all(nrs==np.arange(1,nrs.size+1)) )
+            out["filenames"] = fn
+    h5f.close()
+    return out
