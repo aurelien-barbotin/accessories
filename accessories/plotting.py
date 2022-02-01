@@ -197,8 +197,8 @@ def plot_points(p,x,spacing, color="C0",markersize=3):
     print(len(pts))
     return pts
 
-def stacked_bar(arr, labels = None):
-    # arr must have shape (percentages for each class ,n conditions)
+def stacked_bar(arr, labels = None, ticks = None):
+    # arr must have shape (n experiments , percentage per class)
     if labels is None:
         labels = [None for w in arr.shape[1]]
     xn = np.arange(arr.shape[0])
@@ -212,3 +212,6 @@ def stacked_bar(arr, labels = None):
             plt.bar(xn,arr[:,j], bottom = bottom, label=labels[j])
     if labels[0] is not None:
         plt.legend()
+    if ticks is not None:
+        assert len(ticks) == arr.shape[0]
+        plt.xticks(np.arange(len(ticks)),ticks)
