@@ -113,11 +113,12 @@ def plot_scalebar(img,res,pos = [0.5,0.98],axis = 0, nline = 50, size = 1):
     return xsbar,zsbar
 
 
-def plot_squarebox(xs,zs, kwgs = {"color":"white", "linestyle":"-"}):
+def plot_squarebox(xs,zs, kwgs = {"color":"white", "linestyle":"-"}, ax = None):
     """Plots a square box at given coordinates
     Parameters:
         xs (list): min and max x position
-        zs (list): min and max y position"""
+        zs (list): min and max y position
+        ax (Axis)"""
     npts = 10
     x1 = np.linspace(xs[0],xs[1], npts)
     y1 = np.linspace(zs[0],zs[1],npts)
@@ -126,16 +127,28 @@ def plot_squarebox(xs,zs, kwgs = {"color":"white", "linestyle":"-"}):
     y2 = np.ones(npts)*zs[0]
     y3 = np.ones(npts)*zs[1]
     
-    # bottom
-    plt.plot(x1,y2,**kwgs)
-    # top
-    plt.plot(x1,y3,**kwgs)
-    
-    # left
-    plt.plot(x2,y1,**kwgs)
-    
-    # right
-    plt.plot(x3,y1,**kwgs)
+    if ax is None:
+        # bottom
+        plt.plot(x1,y2,**kwgs)
+        # top
+        plt.plot(x1,y3,**kwgs)
+        
+        # left
+        plt.plot(x2,y1,**kwgs)
+        
+        # right
+        plt.plot(x3,y1,**kwgs)
+    else:
+        # bottom
+        ax.plot(x1,y2,**kwgs)
+        # top
+        ax.plot(x1,y3,**kwgs)
+        
+        # left
+        ax.plot(x2,y1,**kwgs)
+        
+        # right
+        ax.plot(x3,y1,**kwgs)
     
 def plot_points(p,x,spacing, color="C0",markersize=3, ax = None, label=None):
     """Plots all points of a distribution.
@@ -185,4 +198,28 @@ def plot_points(p,x,spacing, color="C0",markersize=3, ax = None, label=None):
         if jit==niter:
             raise TimeoutError("Too many iterations")
         jit+=1
+<<<<<<< HEAD
     return pts
+=======
+    print(len(pts))
+    return pts
+
+def stacked_bar(arr, labels = None, ticks = None):
+    # arr must have shape (n experiments , percentage per class)
+    if labels is None:
+        labels = [None for w in arr.shape[1]]
+    xn = np.arange(arr.shape[0])
+    plt.figure()
+    bottom = 0
+    for j in range(arr.shape[1]):
+        if j==0:
+            plt.bar(xn,arr[:,j], label=labels[j])
+        else:
+            bottom+=arr[:,j-1]
+            plt.bar(xn,arr[:,j], bottom = bottom, label=labels[j])
+    if labels[0] is not None:
+        plt.legend()
+    if ticks is not None:
+        assert len(ticks) == arr.shape[0]
+        plt.xticks(np.arange(len(ticks)),ticks)
+>>>>>>> e28c240b288eb343cda903f4bbde890430e4b323
