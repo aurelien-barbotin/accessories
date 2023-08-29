@@ -1,13 +1,12 @@
-Metadata-Version: 1.0
+Metadata-Version: 2.1
 Name: accessories
 Version: 0.1
 Summary: Miscalleneous accessories
-Home-page: UNKNOWN
+Home-page: 
 Author: Aurelien Barbotin
 Author-email: aurelien.barbotin@dtc.ox.ac.uk
 License: MIT
-Description: # Accessories
-        
-        Miscalleneous accessories that come in handy for plotting or reading certain file types, like tiffs. 
-        
-Platform: UNKNOWN
+
+# Accessories
+
+Miscalleneous accessories that come in handy for plotting or reading certain file types, like tiffs. 

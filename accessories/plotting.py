@@ -12,7 +12,7 @@ import os
 
 from matplotlib.colors import ListedColormap
 
-FIJI_PATH = r"/opt/Fiji.app/luts/"
+FIJI_PATH = r"/home/aurelien/Software/ij/luts/"
 
 def fiji_luts_available():
     luts = glob.glob(FIJI_PATH+"*.lut")
@@ -137,7 +137,7 @@ def plot_squarebox(xs,zs, kwgs = {"color":"white", "linestyle":"-"}):
     # right
     plt.plot(x3,y1,**kwgs)
     
-def plot_points(p,x,spacing, color="C0",markersize=3):
+def plot_points(p,x,spacing, color="C0",markersize=3, ax = None, label=None):
     """Plots all points of a distribution.
     Parameters:
         p (list):, values of datapoints to plot
@@ -145,29 +145,31 @@ def plot_points(p,x,spacing, color="C0",markersize=3):
         spacing (float): minimum distance between points
     Returns:
         """
+        
     assert(spacing>0)
-    def fdx(pts,x):
+    if ax is None:
+        ax = plt.gca()
+    def fdx(pts,x,lab=None):
         dist = spacing *2 # initialise to do the thing
         curr_pt = pts[0]
         
         # initialisation
         indices_to_remove = [0]
+        ax.plot(x,curr_pt,"o",color=color, markersize = markersize, label = lab)
         
-        plt.plot(x,curr_pt,"o",color=color, markersize = markersize)
         for j in range(1,len(pts)):
             pt = pts[j]
             dist = pt - curr_pt
             
             if dist>spacing:
                 curr_pt = pt
-                plt.plot(x,curr_pt,"o",color=color,markersize=markersize)
+                ax.plot(x,curr_pt,"o",color=color,markersize=markersize)
                 indices_to_remove.append(j)
         for ind in indices_to_remove[::-1]:
             pts.pop(ind)
     #plt.figure()
     # Takes a set of ys as coordinates
     pts = sorted(p)
-    print(len(pts))
     niter = len(p) # max iters
     jit = 0
     
@@ -175,11 +177,12 @@ def plot_points(p,x,spacing, color="C0",markersize=3):
     xs = np.linspace(0,dx,niter)
     xs[1::2] = np.linspace(0,-dx,niter//2)
     xs+=x
+    lab = label
     while(len(pts)>0 and jit<niter):
         # pts = pts[::-1]
-        fdx(pts,xs[jit])
-        if jit==niter-1:
-            raise TimeoutError("Too many interations")
+        fdx(pts,xs[jit],lab=lab)
+        lab=None
+        if jit==niter:
+            raise TimeoutError("Too many iterations")
         jit+=1
-    print(len(pts))
     return pts
